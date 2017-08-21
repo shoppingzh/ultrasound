@@ -50,7 +50,7 @@ public class ImageAdapter extends ArrayAdapter<ImageInfo> {
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(mContext).inflate(mResource,null);
             viewHolder.imageIv = (ImageView) convertView.findViewById(R.id.iv_image);
-            viewHolder.idTv = (TextView) convertView.findViewById(R.id.tv_id);
+//            viewHolder.idTv = (TextView) convertView.findViewById(R.id.tv_id);
             convertView.setTag(viewHolder);
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
@@ -65,7 +65,7 @@ public class ImageAdapter extends ArrayAdapter<ImageInfo> {
         }else{
             ImageLoader.getInstance().displayImage("drawable://"+info.getId(),viewHolder.imageIv);
         }
-        viewHolder.idTv.setText(info.getId());
+//        viewHolder.idTv.setText(info.getId());
 
         return convertView;
     }

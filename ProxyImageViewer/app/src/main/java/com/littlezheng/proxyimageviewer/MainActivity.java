@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 
 import com.littlezheng.proxyimageviewer.adapter.ImageAdapter;
@@ -70,13 +71,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         Log.d(TAG,images.toString());
 
-        ListView lv = new ListView(this);
+        GridView gridView = new GridView(this);
+        gridView.setNumColumns(GridView.AUTO_FIT);
+//        gridView.setPadding(10,10,10,10);
+//        ListView lv = new ListView(this);
         ImageAdapter adapter = new ImageAdapter(this,R.layout.image_list_item,images);
         adapter.setUseProxy(useProxy);
-        lv.setAdapter(adapter);
+        gridView.setAdapter(adapter);
 
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setView(lv);
+        alertDialog.setView(gridView);
         alertDialog.show();
 
     }

@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.PopupMenu;
+import android.text.Layout;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         measureBtn.setOnClickListener(this);
 
         displayWindow = new DisplayWindow(this);
-        ((LinearLayout)findViewById(R.id.layout_wrapper)).addView(displayWindow);
+        LinearLayout linearLayout = (LinearLayout)findViewById(R.id.layout_wrapper);
+        linearLayout.addView(displayWindow);
     }
 
 

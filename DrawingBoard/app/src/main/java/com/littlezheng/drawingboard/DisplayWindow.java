@@ -46,7 +46,6 @@ public class DisplayWindow extends GLContinuousView {
     @Override
     protected void onGLDraw(ICanvasGL canvas) {
 
-
     }
 
 }
