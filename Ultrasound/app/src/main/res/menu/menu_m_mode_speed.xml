@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/item_speed_default"
+        android:title="Default Speed" />
+
+    <item android:id="@+id/item_speed_inc"
+        android:title="Speed+"/>
+
+    <item android:id="@+id/item_speed_dec"
+        android:title="Speed-"/>
+
+
+
+</menu>

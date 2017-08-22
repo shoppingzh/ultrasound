@@ -4,17 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLException;
+import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.chillingvan.canvasgl.ICanvasGL;
 import com.chillingvan.canvasgl.glview.GLContinuousView;
 import com.littlezheng.displaymodule.MainActivity;
-import com.littlezheng.displaymodule.display.strategy.DrawStrategy;
+import com.littlezheng.displaymodule.display.strategy.DisplayStrategy;
 
 import java.io.IOException;
 import java.nio.IntBuffer;
-import java.util.List;
-import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -28,9 +27,9 @@ public class DisplayView extends GLContinuousView {
     private Context mContext;
 
     //绘制策略
-    private DrawStrategy drawStrategy;
+    private DisplayStrategy displayStrategy;
     //窗口大小改变监听器
-    private DisplayViewListener listener;
+    private OnWindowSizeChangedListener onWindowSizeChangedListener;
 
     //是否截取当前画面
     private boolean isCaptureScreen;
@@ -47,32 +46,32 @@ public class DisplayView extends GLContinuousView {
     /**
      * 如果需要对该视图进行状态监听如：窗口创建、窗口大小改变等，请使用该构造方法
      * 该监听器可对需要使用到窗口宽度和高度的绘图策略提供窗口的宽高，以便绘制时确定元素绘制的位置等，如：
-     * DisplayView view = new DisplayView(MainActivity.this, new DisplayViewListener(){
+     * DisplayView view = new DisplayView(MainActivity.this, new OnWindowSizeChangedListener(){
      *      @Override
-     *      public void onSurfaceChanged(GL10 gl, int width, int height) {
+     *      public void onWindowSizeChanged(int width, int height) {
      *           //此处获取到宽高，可对绘制策略进行初始化工作
      *      }
      * });
      * @param context
-     * @param listener
+     * @param onWindowSizeChangedListener
      */
-    public DisplayView(Context context,DisplayViewListener listener) {
+    public DisplayView(Context context,OnWindowSizeChangedListener onWindowSizeChangedListener) {
         super(context);
         mContext = context;
-        this.listener = listener;
+        this.onWindowSizeChangedListener = onWindowSizeChangedListener;
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         super.onSurfaceChanged(gl, width, height);
-        listener.onSurfaceChanged(gl, width, height);
+        onWindowSizeChangedListener.onWindowSizeChanged(width, height);
         windowWidth = width;
         windowHeight = height;
     }
 
     @Override
     protected void onGLDraw(ICanvasGL canvas) {
-        drawStrategy.onGLDraw(canvas);
+        displayStrategy.onGLDraw(canvas);
 
         //如果截图的话
         if (isCaptureScreen) {
@@ -105,12 +104,17 @@ public class DisplayView extends GLContinuousView {
         }
     }
 
-    public void setDrawStrategy(DrawStrategy drawStrategy) {
-        this.drawStrategy = drawStrategy;
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return displayStrategy.onTouchEvent(event);
     }
 
-    public DrawStrategy getDrawStrategy() {
-        return drawStrategy;
+    public void setDisplayStrategy(DisplayStrategy displayStrategy) {
+        this.displayStrategy = displayStrategy;
+    }
+
+    public DisplayStrategy getDisplayStrategy() {
+        return displayStrategy;
     }
 
     /**
@@ -118,6 +122,10 @@ public class DisplayView extends GLContinuousView {
      */
     public void captureScreen(){
         isCaptureScreen = true;
+    }
+
+    public void setOnWindowSizeChangedListener(OnWindowSizeChangedListener onWindowSizeChangedListener) {
+        this.onWindowSizeChangedListener = onWindowSizeChangedListener;
     }
 
     /**
@@ -153,6 +161,15 @@ public class DisplayView extends GLContinuousView {
             return null;
         }
         return Bitmap.createBitmap(bitmapSource, w, h, Bitmap.Config.ARGB_8888);
+    }
+
+    /**
+     * 窗口尺寸改变监听器
+     */
+    public interface OnWindowSizeChangedListener{
+
+        void onWindowSizeChanged(int width, int height);
+
     }
 
 }

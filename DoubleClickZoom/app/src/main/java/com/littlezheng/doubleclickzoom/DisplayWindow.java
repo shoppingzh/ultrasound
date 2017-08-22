@@ -31,7 +31,7 @@ public class DisplayWindow extends GLContinuousView {
 
     private int windowWid,windowHei;
     private Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.bg);
-    private CanvasGL.BitmapMatrix m2 = new CanvasGL.BitmapMatrix();
+    private CanvasGL.BitmapMatrix m = new CanvasGL.BitmapMatrix();
     private boolean large = false;
 
     public DisplayWindow(Context context) {
@@ -52,11 +52,11 @@ public class DisplayWindow extends GLContinuousView {
             final float x = e.getX();
             final float y = e.getY();
             if(!large){
-                m2.postScale(3f, 3f, x, y);
+                m.postScale(3f, 3f, x, y);
                 large = true;
             }else{
-                m2.reset();
-                m2.postScale((float)windowWid/bmp.getWidth(),(float)windowHei/bmp.getHeight());
+                m.reset();
+                m.postScale((float)windowWid/bmp.getWidth(),(float)windowHei/bmp.getHeight());
                 large = false;
             }
 
@@ -76,12 +76,13 @@ public class DisplayWindow extends GLContinuousView {
         super.onSurfaceChanged(gl, width, height);
         windowWid = width;
         windowHei = height;
-        m2.postScale((float)width/bmp.getWidth(),(float)height/bmp.getHeight());
+        m.postScale((float)width/bmp.getWidth(),(float)height/bmp.getHeight());
     }
 
     @Override
     protected void onGLDraw(ICanvasGL canvas) {
-        canvas.drawBitmap(bmp,m2);
+        canvas.drawBitmap(bmp,m);
+
 
         try {
             Thread.sleep(50);

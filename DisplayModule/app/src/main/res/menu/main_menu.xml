@@ -10,6 +10,12 @@
     <item android:id="@+id/item_time"
         android:title="查看时间"/>
 
+    <item android:id="@+id/item_time_hello"
+        android:title="同时具备时间和提示语的绘制策略"/>
+
+    <item android:id="@+id/item_load_bmp"
+        android:title="加载一张图片" />
+
     <item android:id="@+id/item_capture_screen"
         android:title="截取当前画面" />
 

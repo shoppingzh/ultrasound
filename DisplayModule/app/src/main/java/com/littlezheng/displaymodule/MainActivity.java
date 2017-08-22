@@ -3,6 +3,7 @@ package com.littlezheng.displaymodule;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -10,12 +11,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.littlezheng.displaymodule.display.test.BitmapLoadStrategy;
 import com.littlezheng.displaymodule.display.test.CircleStrategy;
 import com.littlezheng.displaymodule.display.DisplayView;
-import com.littlezheng.displaymodule.display.test.HelloDrawStrategy;
+import com.littlezheng.displaymodule.display.test.HelloDisplayStrategy;
 import com.littlezheng.displaymodule.display.test.RectStrategy;
-import com.littlezheng.displaymodule.display.DisplayViewListener;
 import com.littlezheng.displaymodule.display.test.TimeStrategy;
+import com.littlezheng.displaymodule.display.test.TimeStrategyDecorator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,28 +30,37 @@ public class MainActivity extends AppCompatActivity {
 
     private DisplayView displayView;
 
-    private HelloDrawStrategy helloStrategy;
+    private HelloDisplayStrategy helloStrategy;
     private RectStrategy rectStrategy;
     private CircleStrategy circleStrategy;
     private TimeStrategy timeStrategy;
+    private TimeStrategyDecorator timeStrategyDecorator;
+    private BitmapLoadStrategy bitmapLoadStrategy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        helloStrategy = new HelloDrawStrategy();
-        rectStrategy = new RectStrategy();
-        circleStrategy = new CircleStrategy();
-        timeStrategy = new TimeStrategy();
-        displayView = new DisplayView(this, new DisplayViewListener() {
+
+        helloStrategy = new HelloDisplayStrategy(this);
+        rectStrategy = new RectStrategy(this);
+        circleStrategy = new CircleStrategy(this);
+        timeStrategy = new TimeStrategy(this);
+        timeStrategyDecorator = new TimeStrategyDecorator(this,helloStrategy);
+        bitmapLoadStrategy = new BitmapLoadStrategy(this,BitmapFactory.decodeResource(getResources(),R.drawable.img_3));
+
+        displayView = new DisplayView(this);
+        displayView.setOnWindowSizeChangedListener(new DisplayView.OnWindowSizeChangedListener() {
             @Override
-            public void onSurfaceChanged(GL10 gl, int width, int height) {
-                helloStrategy.init(gl, width, height);
-                rectStrategy.init(gl, width, height);
-                circleStrategy.init(gl, width, height);
+            public void onWindowSizeChanged(int width, int height) {
+                helloStrategy.init(width, height);
+                rectStrategy.init(width, height);
+                circleStrategy.init(width, height);
                 timeStrategy.init(width, height);
+                timeStrategyDecorator.init(width, height);
+                bitmapLoadStrategy.init(width, height);
             }
         });
-        displayView.setDrawStrategy(helloStrategy);
+        displayView.setDisplayStrategy(helloStrategy);
         setContentView(displayView);
 
         if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -69,13 +80,19 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.item_mode_rect:
-                displayView.setDrawStrategy(rectStrategy);
+                displayView.setDisplayStrategy(rectStrategy);
                 break;
             case R.id.item_mode_circle:
-                displayView.setDrawStrategy(circleStrategy);
+                displayView.setDisplayStrategy(circleStrategy);
                 break;
             case R.id.item_time:
-                displayView.setDrawStrategy(timeStrategy);
+                displayView.setDisplayStrategy(timeStrategy);
+                break;
+            case R.id.item_time_hello:
+                displayView.setDisplayStrategy(timeStrategyDecorator);
+                break;
+            case R.id.item_load_bmp:
+                displayView.setDisplayStrategy(bitmapLoadStrategy);
                 break;
 
             case R.id.item_capture_screen:
