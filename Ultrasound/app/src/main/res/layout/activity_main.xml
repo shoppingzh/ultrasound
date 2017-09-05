@@ -25,7 +25,9 @@
         </LinearLayout>
 
 
+        <!--基本功能-->
         <LinearLayout
+            android:id="@+id/layout_function_normal"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,16 +40,9 @@
                 android:text="冻结/运行"/>
 
             <Button
-                android:id="@+id/btn_play_video"
+                android:id="@+id/btn_measure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="播放"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:text="测量"/>
 
             <Button
@@ -58,17 +53,28 @@
                 android:text="清除注释"/>
 
             <Button
-                android:id="@+id/btn_save_snapshot"
+                android:id="@+id/btn_play_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="保存图像"/>
+                android:text="回放"/>
 
             <Button
                 android:id="@+id/btn_save_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:text="保存视频"/>
+
+            <Button
+                android:id="@+id/btn_videos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="查看视频"/>
+
+            <Button
+                android:id="@+id/btn_save_snapshot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="保存图像"/>
 
             <Button
                 android:id="@+id/btn_preview"
@@ -102,18 +108,11 @@
 
                 android:text="B/M"/>
 
-
             <Button
-                android:id="@+id/btn_inc_depth"
+                android:id="@+id/btn_pseudo_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="深度↑"/>
-
-            <Button
-                android:id="@+id/btn_dec_depth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="深度↓"/>
+                android:text="伪彩"/>
 
             <Button
                 android:id="@+id/btn_add_patient"
@@ -128,7 +127,6 @@
                 android:visibility="gone"
                 android:text="设置"/>
 
-
         </LinearLayout>
 
 
@@ -136,8 +134,9 @@
     </LinearLayout>
 
 
-    <!-- 右侧（控制区域） -->
+    <!-- 右侧（参数控制） -->
     <LinearLayout
+        android:id="@+id/layout_function_params"
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -202,6 +201,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="远增↓"/>
+
+        <Button
+            android:id="@+id/btn_inc_depth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="深度↑"/>
+
+        <Button
+            android:id="@+id/btn_dec_depth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="深度↓"/>
 
 
     </LinearLayout>

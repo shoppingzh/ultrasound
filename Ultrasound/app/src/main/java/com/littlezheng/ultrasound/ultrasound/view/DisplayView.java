@@ -3,10 +3,14 @@ package com.littlezheng.ultrasound.ultrasound.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.opengl.GLException;
 import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -65,6 +69,7 @@ public class DisplayView extends GLContinuousView {
         super(context);
         mContext = context;
         this.onWindowSizeChangedListener = onWindowSizeChangedListener;
+        setKeepScreenOn(true);
     }
 
     @Override
@@ -106,10 +111,10 @@ public class DisplayView extends GLContinuousView {
                 }
             }).start();
         }
-
+//        long end = System.currentTimeMillis();
 
         try {
-            Thread.sleep(50);
+            Thread.sleep(20);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -179,9 +184,7 @@ public class DisplayView extends GLContinuousView {
      * 窗口尺寸改变监听器
      */
     public interface OnWindowSizeChangedListener{
-
         void onWindowSizeChanged(int width, int height);
-
     }
 
 }

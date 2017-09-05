@@ -100,4 +100,11 @@ public enum Depth {
         return depth;
     }
 
+    @Override
+    public String toString() {
+        return "Depth{" +
+                "value=" + value +
+                ", index=" + index +
+                '}';
+    }
 }

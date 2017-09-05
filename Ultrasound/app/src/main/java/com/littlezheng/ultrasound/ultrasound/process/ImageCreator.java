@@ -1,13 +1,22 @@
 package com.littlezheng.ultrasound.ultrasound.process;
 
+import android.os.Environment;
 import android.util.Log;
 
 import com.littlezheng.ultrasound.ultrasound.Configuration;
 import com.littlezheng.ultrasound.ultrasound.Depth;
-import com.littlezheng.ultrasound.ultrasound.transfer.api.UdpReceiver;
-import com.littlezheng.ultrasound.ultrasound.transfer.data.Param;
+import com.littlezheng.ultrasound.ultrasound.transfer.BufferedUdpReceiver;
+import com.littlezheng.ultrasound.ultrasound.transfer.Param;
 import com.littlezheng.ultrasound.ultrasound.transfer.validate.UdpPacketValidator;
+import com.littlezheng.ultrasound.ultrasound.util.DateUtils;
+import com.littlezheng.ultrasound.util.ObjectUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,7 +31,6 @@ public class ImageCreator extends Observable implements Observer{
     //全局B图像（以最大B图像为基准）
     public static final int[] bPixels =
             new int[Configuration.THIRD_SAMPLE_MAX_WIDTH*Configuration.THIRD_SAMPLE_MAX_HEIGHT];
-
     public static Depth depth = Depth.DEPTH_DEFAULT;
 
     //全局M图像
@@ -30,7 +38,7 @@ public class ImageCreator extends Observable implements Observer{
             new int[500*Configuration.UDP_USEFUL_DATA_LEN];
 
     private Configuration conf;
-    private UdpReceiver receiver;
+    private BufferedUdpReceiver receiver;
     private UdpPacketValidator validator;
 
     private int idIdx = Configuration.UDP_RECEIVE_PACKET_SIZE - 3;
@@ -66,7 +74,12 @@ public class ImageCreator extends Observable implements Observer{
     private boolean bEnable;
     private boolean mEnable;
 
-    public ImageCreator(Configuration conf,UdpReceiver receiver,
+    //视频存储播放
+    public static int currentFrame = 0;
+    private ImageHolder imageHolder = new ImageHolder(100);
+    private boolean videoState;
+
+    public ImageCreator(Configuration conf,BufferedUdpReceiver receiver,
                         UdpPacketValidator validator){
         this.conf = conf;
         this.receiver = receiver;
@@ -76,6 +89,7 @@ public class ImageCreator extends Observable implements Observer{
     public void start(){
         if(runState) return;
         runState = true;
+        stopVideo();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -86,6 +100,7 @@ public class ImageCreator extends Observable implements Observer{
                         if(!validator.validate(data)) continue;
 
                         int id = data[idIdx] & 0xff;
+//                        Log.d(TAG,"id："+id);
 
                         //生成B图像
                         if(bEnable){
@@ -95,6 +110,10 @@ public class ImageCreator extends Observable implements Observer{
                                 byte[][] frameData = bFrame.getData();
                                 Util.thirdSample(frameData,secondSampleWid,secondSampleHei,positions,intervals,bPixels);
                                 bFrame.clear();
+//                                bFrame = new BFrame(Configuration.SECOND_SAMPLE_WIDTH_BASE,
+//                                        Configuration.SECOND_SAMPLE_MAX_HEIGHT,false);
+                                byte[][] data2 = bFrame.getCloneData();
+                                imageHolder.add(new StorableFrame(data2,depth));
 
                                 setChanged();
                                 notifyObservers();
@@ -125,6 +144,75 @@ public class ImageCreator extends Observable implements Observer{
         runState = false;
     }
 
+    public void playVideo(){
+        if(videoState) return;
+        videoState = true;
+        stop();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int count = 0;
+                for(StorableFrame frame : imageHolder){
+                    if(frame != null){
+                        currentFrame = ++count;
+                        depth = frame.depth;
+                        loadDepthConfig();
+
+                        System.arraycopy(emptyBPixels,0,bPixels,0,bPixels.length);
+                        Util.thirdSample(frame.data,secondSampleWid,secondSampleHei,positions,intervals,bPixels);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        setChanged();
+                        notifyObservers();
+                    }
+                }
+                stopVideo();
+            }
+        }).start();
+
+    }
+
+    public void playVideo(final File videoFile){
+        if(videoState) return;
+        videoState = true;
+        stop();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int count = 0;
+                imageHolder = ObjectUtils.readObject(videoFile, ImageHolder.class);
+                for(StorableFrame frame : imageHolder){
+                    if(frame != null){
+                        currentFrame = ++count;
+                        depth = frame.depth;
+                        loadDepthConfig();
+
+                        System.arraycopy(emptyBPixels,0,bPixels,0,bPixels.length);
+                        Util.thirdSample(frame.data,secondSampleWid,secondSampleHei,positions,intervals,bPixels);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        setChanged();
+                        notifyObservers();
+                    }
+                }
+                stopVideo();
+            }
+        }).start();
+
+    }
+
+    public void stopVideo(){
+        videoState = false;
+    }
+
     private void loadDepthConfig(){
         bFrame = new BFrame(Configuration.SECOND_SAMPLE_WIDTH_BASE,
                 Configuration.SECOND_SAMPLE_MAX_HEIGHT,false);
@@ -149,6 +237,7 @@ public class ImageCreator extends Observable implements Observer{
 
     public void setbEnable(boolean bEnable) {
         this.bEnable = bEnable;
+        receiver.clearBuffer();
     }
 
     public boolean ismEnable() {
@@ -157,6 +246,7 @@ public class ImageCreator extends Observable implements Observer{
 
     public void setmEnable(boolean mEnable) {
         this.mEnable = mEnable;
+        receiver.clearBuffer();
     }
 
     public void clearBImage(){
@@ -166,4 +256,13 @@ public class ImageCreator extends Observable implements Observer{
     public void clearMImage(){
         System.arraycopy(emptyMPixels,0,mPixels,0,emptyMPixels.length);
     }
+
+    public void saveVideo() {
+        if(runState) return;
+        File file = new File(Environment.getExternalStorageDirectory(),
+                Configuration.VIDEO_SAVE_FOLDER+"/"+ DateUtils.getDateTimeStr()+".ump4");
+        boolean rst = ObjectUtils.saveObject(imageHolder, file);
+        Log.d(TAG,"保存成功：" + rst);
+    }
+
 }

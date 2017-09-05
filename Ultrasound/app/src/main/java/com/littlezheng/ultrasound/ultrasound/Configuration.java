@@ -39,6 +39,7 @@ public class Configuration {
     public static final String AP_SSID = "\"FAST_4D3492\"";
     public static final int UDP_USEFUL_DATA_LEN = 400;
     public static final String SNAPSHOT_SAVE_FOLDER = "aaa/img";
+    public static final String VIDEO_SAVE_FOLDER = "aaa/video";
 
     private final Context context;
     /*******************************深度30-220mm对应的插值信息***********************************/

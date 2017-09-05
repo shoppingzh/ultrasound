@@ -12,9 +12,9 @@ import com.chillingvan.canvasgl.ICanvasGL;
  * Created by Administrator on 2017/8/22/022.
  */
 
-public class ImageShowStrategy extends AbsDisplayStrategy {
+public class ImageShowStrategy extends AbstractDisplayStrategy {
 
-    private static final float MAX_SCALE_RATIO = 3f;
+    private static final float MAX_SCALE_RATIO = 2f;
 
     private int windowWidth;
     private int windowHeight;
@@ -39,7 +39,6 @@ public class ImageShowStrategy extends AbsDisplayStrategy {
 
             return super.onDoubleTap(e);
         }
-
 
         @Override
         public boolean onDoubleTapEvent(MotionEvent e) {

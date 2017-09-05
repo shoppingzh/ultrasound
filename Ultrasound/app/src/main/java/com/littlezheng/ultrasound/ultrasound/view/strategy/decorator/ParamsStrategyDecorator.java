@@ -2,48 +2,48 @@ package com.littlezheng.ultrasound.ultrasound.view.strategy.decorator;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.widget.Toast;
 
 import com.chillingvan.canvasgl.ICanvasGL;
-import com.littlezheng.ultrasound.ultrasound.transfer.data.Param;
+import com.littlezheng.ultrasound.ultrasound.transfer.Param;
 import com.littlezheng.ultrasound.ultrasound.util.GraphUtils;
 import com.littlezheng.ultrasound.ultrasound.view.image.TextImage;
-import com.littlezheng.ultrasound.ultrasound.view.strategy.AbsDisplayStrategy;
 import com.littlezheng.ultrasound.ultrasound.view.strategy.DisplayStrategy;
 
-import org.w3c.dom.Text;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by Administrator on 2017/8/22/022.
  */
 
-public class ParamsStrategyDecorator extends AbsDisplayStrategy {
+public class ParamsStrategyDecorator extends AbstractDisplayStrategyDecorator implements Observer {
 
     private static final String TAG = "ParamsStrategyDecorator";
 
-    private DisplayStrategy displayStrategy;
-
     //参数
-    private Param[] params;
+    private List<Param> params = new CopyOnWriteArrayList<>();
 
     private TextImage paramsImg;
 
     public ParamsStrategyDecorator(Context context, DisplayStrategy displayStrategy, Param... params) {
-        super(context);
-        this.displayStrategy = displayStrategy;
-        this.params = params;
+        super(context,displayStrategy);
+        this.params.addAll(Arrays.asList(params));
+        for(Param p : params){
+            p.addObserver(this);
+        }
 
         paramsImg = new TextImage(GraphUtils.getSimpleTextPaint(20f, Color.WHITE), params.length, 12, 10);
         paramsImg.setDrawPos(20, 100);
+        paramsImg.drawRowsText(getParamsDesc());
     }
 
     @Override
     public void onGLDraw(ICanvasGL canvas) {
-        displayStrategy.onGLDraw(canvas);
+        super.onGLDraw(canvas);
 
-        paramsImg.drawRowsText(getParamsDesc());
         canvas.invalidateTextureContent(paramsImg.getImage());
         canvas.drawBitmap(paramsImg.getImage(),paramsImg.getX(),paramsImg.getY());
     }
@@ -61,6 +61,11 @@ public class ParamsStrategyDecorator extends AbsDisplayStrategy {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        paramsImg.drawRowsText(getParamsDesc());
     }
 
 }

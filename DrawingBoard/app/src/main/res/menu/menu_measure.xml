@@ -3,10 +3,19 @@
 
     <item
         android:id="@+id/item_measure_length"
-        android:title="测量长度"/>
+        android:title="直线"/>
 
     <item
         android:id="@+id/item_measure_area"
-        android:title="测量面积"/>
+        android:title="园"/>
+
+    <item android:id="@+id/item_oval"
+        android:title="椭圆" />
+
+    <item android:id="@+id/item_clear"
+        android:title="清除测量" />
+
+    <item android:id="@+id/item_clear_curr"
+        android:title="清除当前" />
 
 </menu>

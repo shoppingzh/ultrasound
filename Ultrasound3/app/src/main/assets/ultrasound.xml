@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ultrasound>
+
+    <!--数据传输-->
+    <transfer>
+        <!--接收器-->
+        <receiver port="5001"
+            packet-size="406"
+            buffer-size="127"/>
+        <!--发送器-->
+        <sender address="192.168.1.1"
+            port="5001"/>
+    </transfer>
+
+    <!--数据处理-->
+    <process>
+        <!--三次采样数据-->
+        <sample-data assets-file="thirdsample.conf" />
+    </process>
+
+</ultrasound>

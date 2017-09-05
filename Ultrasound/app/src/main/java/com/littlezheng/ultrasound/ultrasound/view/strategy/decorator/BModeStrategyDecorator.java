@@ -2,16 +2,15 @@ package com.littlezheng.ultrasound.ultrasound.view.strategy.decorator;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 
 import com.chillingvan.canvasgl.ICanvasGL;
 import com.littlezheng.ultrasound.ultrasound.Configuration;
 import com.littlezheng.ultrasound.ultrasound.Depth;
 import com.littlezheng.ultrasound.ultrasound.process.ImageCreator;
 import com.littlezheng.ultrasound.ultrasound.view.DrawInfo;
-import com.littlezheng.ultrasound.ultrasound.view.strategy.AbsDisplayStrategy;
 import com.littlezheng.ultrasound.ultrasound.view.strategy.DisplayStrategy;
 
 import java.util.HashMap;
@@ -24,20 +23,17 @@ import java.util.Observer;
  * B模式下只有一个B图像，位于视图正中间
  */
 
-public class BModeStrategyDecorator extends AbsDisplayStrategy implements Observer{
+public class BModeStrategyDecorator extends AbstractDisplayStrategyDecorator implements Observer{
 
     private static final String TAG = "BModeStrategyDecorator";
-    private DisplayStrategy strategy;
 
     private Bitmap bmp = Bitmap.createBitmap(Configuration.THIRD_SAMPLE_MAX_WIDTH,
             Configuration.THIRD_SAMPLE_MAX_HEIGHT, Bitmap.Config.ARGB_8888);
     private Map<Depth,DrawInfo> depthDrawInfoMap = new HashMap<>();
     private Depth depth = Depth.DEPTH_160;
 
-
     public BModeStrategyDecorator(Context context, DisplayStrategy strategy) {
-        super(context);
-        this.strategy = strategy;
+        super(context,strategy);
     }
 
     public void init(int width, int height){
@@ -56,7 +52,7 @@ public class BModeStrategyDecorator extends AbsDisplayStrategy implements Observ
 
     @Override
     public void onGLDraw(ICanvasGL canvas) {
-        strategy.onGLDraw(canvas);
+        super.onGLDraw(canvas);
 
         DrawInfo info = depthDrawInfoMap.get(depth);
         canvas.invalidateTextureContent(bmp);
@@ -69,6 +65,5 @@ public class BModeStrategyDecorator extends AbsDisplayStrategy implements Observ
         bmp.setPixels(ImageCreator.bPixels,0,Configuration.THIRD_SAMPLE_MAX_WIDTH,0,0,
                 Configuration.THIRD_SAMPLE_MAX_WIDTH,Configuration.THIRD_SAMPLE_MAX_HEIGHT);
     }
-
 
 }

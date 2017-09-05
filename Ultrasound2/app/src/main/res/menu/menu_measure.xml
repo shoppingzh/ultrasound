@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/item_length"
+        android:title="长度" />
+
+    <item android:id="@+id/item_area_per"
+        android:title="面积/周长" />
+
+    <item android:id="@+id/item_clear_measure"
+        android:title="清除测量" />
+
+</menu>

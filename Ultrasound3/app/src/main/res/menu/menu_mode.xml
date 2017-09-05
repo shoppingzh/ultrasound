@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/item_mode_b"
+        android:title="B" />
+
+    <item android:id="@+id/item_mode_m"
+        android:title="M" />
+
+    <item android:id="@+id/item_mode_bb"
+        android:title="B/B" />
+
+    <item android:id="@+id/item_mode_bm"
+        android:title="B/M" />
+
+</menu>
