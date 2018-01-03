@@ -28,11 +28,12 @@ public class Configuration {
     private String sendAddress;
     private int sendPort;
     private String sampleDataFile;
+    private int videoFrames;
 
     private final Context context;
     private final InputStream in;
 
-    public Configuration(Context context, String pathname){
+    public Configuration(Context context, String pathname) {
         this.context = context;
         try {
             in = context.getAssets().open(pathname);
@@ -44,6 +45,7 @@ public class Configuration {
 
     /**
      * 解析xml文件将配置信息加载到该类中
+     *
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IOException
@@ -51,11 +53,11 @@ public class Configuration {
     private void parseXML() throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser = factory.newSAXParser();
-        parser.parse(in, new DefaultHandler(){
+        parser.parse(in, new DefaultHandler() {
             @Override
             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
                 super.startElement(uri, localName, qName, attributes);
-                switch (localName){
+                switch (localName) {
                     case "receiver":
                         setReceivePort(Integer.valueOf(attributes.getValue("port")));
                         setReceivePacketSize(Integer.valueOf(attributes.getValue("packet-size")));
@@ -68,6 +70,10 @@ public class Configuration {
                     case "sample-data":
                         setSampleDataFile(attributes.getValue("assets-file"));
                         break;
+                    case "video":
+                        setVideoFrames(Integer.valueOf(attributes.getValue("frames")));
+                        break;
+
                 }
             }
         });
@@ -121,6 +127,14 @@ public class Configuration {
 
     public void setSampleDataFile(String sampleDataFile) {
         this.sampleDataFile = sampleDataFile;
+    }
+
+    public int getVideoFrames() {
+        return videoFrames;
+    }
+
+    public void setVideoFrames(int videoFrames) {
+        this.videoFrames = videoFrames;
     }
 
     public Context getContext() {

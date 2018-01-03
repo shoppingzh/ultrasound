@@ -29,7 +29,7 @@ public class TimeStrategy extends BaseDisplayStrategy {
     public void onGLDraw(ICanvasGL canvas) {
         time.drawText(DateUtils.getDateTimeStr());
         canvas.invalidateTextureContent(time.getImage());
-        canvas.drawBitmap(time.getImage(),time.getX(),time.getY());
+        canvas.drawBitmap(time.getImage(), time.getX(), time.getY());
     }
 
 }

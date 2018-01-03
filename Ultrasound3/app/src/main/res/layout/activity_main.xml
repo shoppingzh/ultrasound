@@ -43,6 +43,7 @@
                 android:id="@+id/btn_measure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:text="测量"/>
 
             <Button
@@ -115,7 +116,7 @@
                 <!--android:id="@+id/btn_mode_m"-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
-                <!--android:text="M"/>-->
+                <!--android:text="Model"/>-->
 
 
             <!--<Button-->
@@ -123,7 +124,7 @@
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
 
-                <!--android:text="B/M"/>-->
+                <!--android:text="B/Model"/>-->
 
             <Button
                 android:id="@+id/btn_add_patient"

@@ -18,7 +18,7 @@ import java.util.Observer;
  * Created by Administrator on 2017/9/2/002.
  */
 
-public class ParamDisplayStrategyDecorator extends BaseDisplayStrategyDecorator implements Observer{
+public class ParamDisplayStrategyDecorator extends BaseDisplayStrategyDecorator implements Observer {
 
     private List<Param> params = new ArrayList<>();
     private TextImage paramText;
@@ -41,9 +41,9 @@ public class ParamDisplayStrategyDecorator extends BaseDisplayStrategyDecorator 
         int count = params.size();
         Paint p = GraphUtils.getSimpleTextPaint(20, Color.WHITE);
         int wid = 0;
-        for(Param param : params){
+        for (Param param : params) {
             int currWid = (int) Math.ceil(p.measureText(param.desc()));
-            if(currWid > wid) wid = currWid;
+            if (currWid > wid) wid = currWid;
             //注册观察者，让该显示策略能感知参数变化
             param.addObserver(this);
         }
@@ -68,10 +68,11 @@ public class ParamDisplayStrategyDecorator extends BaseDisplayStrategyDecorator 
 
     /**
      * 在视图中添加一个参数描述
+     *
      * @param param
      */
-    public void addParam(Param param){
-        if(!params.contains(param)){
+    public void addParam(Param param) {
+        if (!params.contains(param)) {
             params.add(param);
             initTextImage();
         }
@@ -85,7 +86,7 @@ public class ParamDisplayStrategyDecorator extends BaseDisplayStrategyDecorator 
     private String[] getParamsDesc() {
         String[] desc = new String[params.size()];
         int i = 0;
-        for(Param param : params){
+        for (Param param : params) {
             desc[i++] = param.desc();
         }
 

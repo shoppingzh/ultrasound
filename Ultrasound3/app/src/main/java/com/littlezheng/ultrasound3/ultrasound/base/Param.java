@@ -6,19 +6,18 @@ import java.util.Observable;
  * Created by Administrator on 2017/8/31/031.
  */
 
-public class Param extends Observable{
+public class Param extends Observable {
 
-    //参数名、默认值、最大值、最小值、增量
-    private String name;
-    private int defaultValue;
-    private int maxValue;
-    private int minValue;
-    private int increment;
+    private String name;    //参数名
+    private int defaultValue;   //默认值
+    private int maxValue;   //最大值
+    private int minValue;   //最小值
+    private int increment;  //增量
 
     private int currValue;
 
     public Param(String name, int defaultValue, int maxValue,
-                           int minValue, int increment){
+                 int minValue, int increment) {
         this.name = name;
         this.defaultValue = defaultValue;
         this.maxValue = maxValue;
@@ -32,8 +31,8 @@ public class Param extends Observable{
      *
      * @return
      */
-    public boolean increase(){
-        if(currValue >= maxValue) return false;
+    public boolean increase() {
+        if (currValue >= maxValue) return false;
         currValue += increment;
         paramChanged();
         return true;
@@ -44,8 +43,8 @@ public class Param extends Observable{
      *
      * @return
      */
-    public boolean decrease(){
-        if(currValue <= minValue) return false;
+    public boolean decrease() {
+        if (currValue <= minValue) return false;
         currValue -= increment;
         paramChanged();
         return true;
@@ -54,7 +53,7 @@ public class Param extends Observable{
     /**
      * 重置为默认值
      */
-    public void reset(){
+    public void reset() {
         currValue = defaultValue;
         paramChanged();
     }
@@ -90,17 +89,18 @@ public class Param extends Observable{
     /**
      * 参数改变，通知观察者
      */
-    private void paramChanged(){
+    private void paramChanged() {
         setChanged();
         notifyObservers();
     }
 
     /**
      * 描述
+     *
      * @return 如 深度: 160mm
      */
-    public String desc(){
-        return name + ": " +currValue;
+    public String desc() {
+        return name + ": " + currValue;
     }
 
 

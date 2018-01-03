@@ -11,7 +11,7 @@ public abstract class BaseDisplayStrategy implements DisplayStrategy {
 
     protected Context mContext;
 
-    public BaseDisplayStrategy(Context context){
+    public BaseDisplayStrategy(Context context) {
         mContext = context;
     }
 

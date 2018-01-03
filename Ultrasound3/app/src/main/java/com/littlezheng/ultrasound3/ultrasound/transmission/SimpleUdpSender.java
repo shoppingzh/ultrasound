@@ -21,12 +21,10 @@ public class SimpleUdpSender implements UdpSender {
     private static final String TAG = "SimpleUdpSender";
 
     private final DatagramSocket socket;
-    private final BlockingQueue<DatagramPacket> messageQueue;
+    private final BlockingQueue<DatagramPacket> messageQueue;   //消息队列
 
-    //发送目的地ip
-    private InetAddress dstAddress;
-    //发送目的地端口
-    private int dstPort;
+    private InetAddress dstAddress;     //发送目的地ip
+    private int dstPort;     //发送目的地端口
 
     public SimpleUdpSender(InetAddress dstAddress, int dstPort) throws SocketException {
         this.dstAddress = dstAddress;
@@ -44,12 +42,12 @@ public class SimpleUdpSender implements UdpSender {
             @Override
             public void run() {
                 try {
-                    while(true){
+                    while (true) {
                         DatagramPacket packet = messageQueue.take();
                         socket.send(packet);
-                        Log.d(TAG,"发送数据："+ Arrays.toString(packet.getData()));
+                        Log.d(TAG, "发送数据：" + Arrays.toString(packet.getData()));
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     //TODO
                 }
@@ -70,9 +68,9 @@ public class SimpleUdpSender implements UdpSender {
      * 重置发送目的地
      *
      * @param newAddress 新目的地地址
-     * @param newPort 新目的地端口
+     * @param newPort    新目的地端口
      */
-    public void resetDestination(InetAddress newAddress, int newPort){
+    public void resetDestination(InetAddress newAddress, int newPort) {
         dstAddress = newAddress;
         dstPort = newPort;
     }

@@ -16,7 +16,12 @@
     <!--数据处理-->
     <process>
         <!--三次采样数据-->
-        <sample-data assets-file="thirdsample.conf" />
+        <sample-data assets-file="thirdsample.data" />
     </process>
+
+    <display>
+        <!--frames：视频帧数-->
+        <video frames="200"/>
+    </display>
 
 </ultrasound>

@@ -45,7 +45,7 @@ public class DisplayView extends GLContinuousView {
         super.onSurfaceChanged(gl, width, height);
         this.width = width;
         this.height = height;
-        Log.d(TAG,"视窗大小：["+width+","+height+"]");
+        Log.d(TAG, "视窗大小：[" + width + "," + height + "]");
         strategy.init(width, height);
     }
 
@@ -64,13 +64,13 @@ public class DisplayView extends GLContinuousView {
                 public void run() {
                     File path = new File(Environment.getExternalStorageDirectory(),
                             UContext.IMAGE_STORAGE_PATH + "/" + DateUtils.getDateStr());
-                    BitmapUtils.saveBitmap(bmp, path, System.currentTimeMillis()+".jpg");
+                    BitmapUtils.saveBitmap(bmp, path, System.currentTimeMillis() + ".jpg");
                 }
             }).start();
         }
 
         try {
-            Thread.sleep(20);
+            Thread.sleep(40);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -85,9 +85,10 @@ public class DisplayView extends GLContinuousView {
 
     /**
      * 转换显示策略，该方法在调用前请先保证视图初始化完成，否则新的策略将无法使用到视图的宽高属性
+     *
      * @param newStrategy 新的策略
      */
-    public void changeStrategy(DisplayStrategy newStrategy){
+    public void changeStrategy(DisplayStrategy newStrategy) {
         //转换策略之前，将原有策略进行清理工作
         strategy.cleanup();
         newStrategy.init(width, height);
@@ -97,7 +98,7 @@ public class DisplayView extends GLContinuousView {
     /**
      * 保存当前视窗内容为位图
      */
-    public void saveCurrentBitmap(){
+    public void saveCurrentBitmap() {
         isCaptureScreen = true;
     }
 
@@ -107,10 +108,11 @@ public class DisplayView extends GLContinuousView {
 
     /**
      * 从当前GLSurface中创建位图，即截取当前视图的图片
-     * @param x 截取x坐标
-     * @param y 截取y坐标
-     * @param w 截取高度
-     * @param h 截取宽度
+     *
+     * @param x  截取x坐标
+     * @param y  截取y坐标
+     * @param w  截取高度
+     * @param h  截取宽度
      * @param gl
      * @return
      */

@@ -7,7 +7,7 @@ import java.util.Arrays;
  * Created by Administrator on 2017/8/28/028.
  */
 
-class StorableFrame implements Serializable{
+class StorableFrame implements Serializable {
 
     private static final long serialVersionUID = 409832798100291397L;
 
@@ -15,7 +15,7 @@ class StorableFrame implements Serializable{
     int depth;
     int[] colors;
 
-    public StorableFrame(byte[][] data, int depth, int[] colors){
+    public StorableFrame(byte[][] data, int depth, int[] colors) {
         this.data = data;
         this.depth = depth;
         this.colors = colors;

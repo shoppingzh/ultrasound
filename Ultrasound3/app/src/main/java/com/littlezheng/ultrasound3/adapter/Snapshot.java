@@ -9,7 +9,7 @@ public class Snapshot {
     private String pathName;
     private String name;
 
-    public Snapshot(String pathName,String name) {
+    public Snapshot(String pathName, String name) {
         this.pathName = pathName;
         this.name = name;
     }

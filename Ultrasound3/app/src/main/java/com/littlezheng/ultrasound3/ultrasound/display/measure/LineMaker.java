@@ -7,7 +7,7 @@ import com.littlezheng.ultrasound3.ultrasound.util.MeasureUtils;
 
 /**
  * Created by Administrator on 2017/8/24/024.
- *
+ * <p>
  * 两步即可画出一条直线，第一次点击画出第一个点，第二次点击直接画出直线
  */
 
@@ -24,7 +24,7 @@ public class LineMaker extends ShapeMaker {
     @Override
     public void click(float x, float y) {
         super.click(x, y);
-        switch (step){
+        switch (step) {
             case 1:
                 first.set(x, y);
                 break;
@@ -42,11 +42,12 @@ public class LineMaker extends ShapeMaker {
 
     /**
      * 获取更近的点
+     *
      * @param x
      * @param y
      * @return
      */
-    private PointF getCloser(float x, float y){
+    private PointF getCloser(float x, float y) {
         PointF p = new PointF(x, y);
         double firstLen = MeasureUtils.length(p, first);
         double secondLen = MeasureUtils.length(p, second);
@@ -55,7 +56,7 @@ public class LineMaker extends ShapeMaker {
 
     @Override
     public void make(Canvas canvas) {
-        switch (step){
+        switch (step) {
             case 1:
                 canvas.drawCircle(first.x, first.y, 10, pointPaint);
                 break;
@@ -67,7 +68,7 @@ public class LineMaker extends ShapeMaker {
                 canvas.drawCircle(first.x, first.y, 10, pointPaint);
                 canvas.drawCircle(second.x, second.y, 10, pointPaint);
                 canvas.drawLine(first.x, first.y, second.x, second.y, linePaint);
-                canvas.drawText("长度："+MeasureUtils.length(first,second),second.x, second.y, textPaint);
+                canvas.drawText("长度：" + MeasureUtils.length(first, second), second.x, second.y, textPaint);
                 break;
         }
     }

@@ -10,16 +10,15 @@ import java.util.Date;
 
 public class DateUtils {
 
-    public static String getDateTimeStr(){
+    public static String getDateTimeStr() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(new Date());
     }
 
-    public static String getDateStr(){
+    public static String getDateStr() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(new Date());
     }
-
 
 
 }

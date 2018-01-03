@@ -7,6 +7,7 @@ import com.littlezheng.ultrasound3.ultrasound.base.Colors;
 import com.littlezheng.ultrasound3.ultrasound.base.Mode;
 import com.littlezheng.ultrasound3.ultrasound.base.ModeSwitcher;
 import com.littlezheng.ultrasound3.ultrasound.base.Param;
+import com.littlezheng.ultrasound3.ultrasound.base.SampledData;
 import com.littlezheng.ultrasound3.ultrasound.base.StateSwitcher;
 import com.littlezheng.ultrasound3.ultrasound.process.ImageHolder;
 import com.littlezheng.ultrasound3.ultrasound.transmission.UdpTransmitter;
@@ -22,7 +23,8 @@ import java.util.Map;
 
 public class UContext {
 
-    private Configuration configuration;
+    public static final String IMAGE_STORAGE_PATH = "aaa/img";
+    public static final String VIDEO_STORAGE_PATH = "aaa/video";
 
     public static final int STATE_NO_CONNECT = 0x00000000;
     public static final int STATE_FREEZE = 0x00000001;
@@ -46,37 +48,27 @@ public class UContext {
     public static final int PSEUDO_COLOR_YELLOW = 0x00000112;
     public static final int PSEUDO_COLOR_MIX = 0x00000113;
 
-    public static final String IMAGE_STORAGE_PATH = "aaa/img";
-    public static final String VIDEO_STORAGE_PATH = "aaa/video";
+    private Configuration configuration;
 
-    //当前活动对象
+    //当前Activity
     private final Context androidContext;
 
-    //数据收发器
+    //项目中的必需唯一组件
     private UdpTransmitter udpTransmitter;
-    //参数列表
     private Map<Integer, Param> params = new HashMap<>();
-    //状态转换器
     private StateSwitcher stateSwitcher;
-    //模式切换器
     private ModeSwitcher modeSwitcher;
-    //颜色控制器
     private Colors colors;
-    //采样数据
     private SampledData sampledData;
-
-    //图像信息
-    //b图像像素
     private int[] bImagePixels = new int[SampledData.THIRD_SAMPLE_MAX_WIDTH *
             SampledData.THIRD_SAMPLE_MAX_HEIGHT];
-    //m图像像素
     private int[] mImagePixels = new int[500 * SampledData.ORIGINAL_FRAME_HEIGHT];
+    private ImageHolder imageHolder;
 
-    private ImageHolder imageHolder = new ImageHolder(100);
-
-    public UContext(Configuration configuration){
+    public UContext(Configuration configuration) {
         this.configuration = configuration;
         androidContext = configuration.getContext();
+        imageHolder = new ImageHolder(configuration.getVideoFrames());
         initComponents();
     }
 
@@ -84,6 +76,35 @@ public class UContext {
         initBaseConponents();
         initSampleData();
         initWorkers();
+    }
+
+    /**
+     * 初始化基础组件：
+     * 1. 参数列表
+     * 2. 状态控制器
+     * 3. 模式控制器
+     * 4. 伪彩色控制器
+     */
+    private void initBaseConponents() {
+        params.put(PARAM_CONTRAST, new Param("对比度", 32, 48, 16, 1));
+        params.put(PARAM_LIGHTNESS, new Param("亮度", 32, 46, 20, 1));
+        params.put(PARAM_GAIN, new Param("总增", 16, 32, 1, 1));
+        params.put(PARAM_NEAR_GAIN, new Param("近增", 16, 32, 1, 1));
+        params.put(PARAM_FAR_GAIN, new Param("远增", 16, 32, 1, 1));
+        params.put(PARAM_DEPTH, new Param("深度", 13, 19, 0, 1) {
+            @Override
+            public String desc() {
+                StringBuilder sb = new StringBuilder(getName());
+                sb.append(": ");
+                sb.append(getCurrValue() * 10 + 30);
+                sb.append("mm");
+                return sb.toString();
+            }
+        });
+        params.put(PARAM_SPEED, new Param("速度", 3, 3, 0, 1));
+        stateSwitcher = new StateSwitcher();
+        modeSwitcher = new ModeSwitcher(Mode.MODE_B);
+        colors = new Colors();
     }
 
     /**
@@ -106,35 +127,10 @@ public class UContext {
     }
 
     /**
-     * 初始化参数列表
-     */
-    private void initBaseConponents() {
-        params.put(PARAM_CONTRAST, new Param("对比度", 32, 48, 16, 1));
-        params.put(PARAM_LIGHTNESS, new Param("亮度", 32, 46, 20, 1));
-        params.put(PARAM_GAIN, new Param("总增", 16, 32, 1, 1));
-        params.put(PARAM_NEAR_GAIN, new Param("近增", 16, 32, 1, 1));
-        params.put(PARAM_FAR_GAIN, new Param("远增", 16, 32, 1, 1));
-        params.put(PARAM_DEPTH, new Param("深度", 13, 19, 0, 1){
-            @Override
-            public String desc() {
-                StringBuilder sb = new StringBuilder(getName());
-                sb.append(": ");
-                sb.append(getCurrValue()*10 + 30);
-                sb.append("mm");
-                return sb.toString();
-            }
-        });
-        params.put(PARAM_SPEED, new Param("速度", 3, 3, 0, 1));
-        stateSwitcher = new StateSwitcher();
-        modeSwitcher = new ModeSwitcher(Mode.MODE_B);
-        colors = new Colors();
-    }
-
-    /**
      * 异步加载采样数据
      */
     private void initSampleData() {
-        sampledData = SampledData.getInstance(androidContext);
+        sampledData = SampledData.getInstance(androidContext, configuration.getSampleDataFile());
         new SampledDataLoadTask(androidContext).execute(sampledData);
     }
 
@@ -144,6 +140,7 @@ public class UContext {
 
     /**
      * 获取所有参数集合
+     *
      * @return
      */
     public Collection<Param> getParams() {
@@ -152,11 +149,12 @@ public class UContext {
 
     /**
      * 获取指定参数
+     *
      * @param param UContext.PARAM_CONTRAST
      *              //TODO
      * @return
      */
-    public Param getParam(int param){
+    public Param getParam(int param) {
         return params.get(param);
     }
 

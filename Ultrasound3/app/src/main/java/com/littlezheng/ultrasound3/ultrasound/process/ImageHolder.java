@@ -18,16 +18,17 @@ public class ImageHolder implements Iterable<StorableFrame>, Serializable {
 
     private int pos = 0;
     private boolean empty = true;
-    private int i;
 
-    public ImageHolder(int capacity){
+    private Itr it;
+
+    public ImageHolder(int capacity) {
         this.capacity = capacity;
         frames = new StorableFrame[capacity];
     }
 
-    public void add(StorableFrame frame){
+    public void add(StorableFrame frame) {
         empty = false;
-        if(pos >= capacity) {
+        if (pos >= capacity) {
             pos = 0;
         }
         frames[pos] = null;
@@ -40,18 +41,27 @@ public class ImageHolder implements Iterable<StorableFrame>, Serializable {
 
     @Override
     public Iterator iterator() {
-        return new Itr();
+        return (it = new Itr());
     }
 
-    private class Itr implements Iterator<StorableFrame>,Serializable{
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getCurrentIndex() {
+        return it.index;
+    }
+
+    private class Itr implements Iterator<StorableFrame>, Serializable {
 
         int cursor = ImageHolder.this.pos;
         boolean firstIn = true;
+        int index = 0;
 
         @Override
         public boolean hasNext() {
-            if(cursor == 0) return false;
-            if(cursor == pos && firstIn){
+            if (cursor == 0) return false;
+            if (cursor == pos && firstIn) {
                 firstIn = false;
                 return true;
             }
@@ -61,10 +71,11 @@ public class ImageHolder implements Iterable<StorableFrame>, Serializable {
 
         @Override
         public StorableFrame next() {
-            if(cursor >= capacity) cursor = 0;
+            if (cursor >= capacity) cursor = 0;
             StorableFrame next = frames[cursor];
 //            Log.d(TAG,"cursor: "+ cursor);
             cursor++;
+            index++;
 
             return next;
         }

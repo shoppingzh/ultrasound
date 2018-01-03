@@ -17,7 +17,7 @@ public class ModeProtocol extends Protocol {
     @Override
     public void update(Observable o, Object arg) {
         Mode mode = (Mode) arg;
-        switch (mode){
+        switch (mode) {
             case MODE_B:
                 setData(0x00);
                 break;
@@ -28,18 +28,10 @@ public class ModeProtocol extends Protocol {
                 setData(0x50);
                 break;
             case MODE_BM:
-                setData(0xD0);
+                setData(0x00);
                 break;
         }
-        modeChanged();
-    }
-
-    /**
-     * 模式改变
-     */
-    private void modeChanged() {
-        setChanged();
-        notifyObservers(getProtocol());
+        changed();
     }
 
 }

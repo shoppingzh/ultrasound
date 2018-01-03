@@ -24,12 +24,13 @@ public abstract class Image implements Drawable {
 
     private Paint paint = new Paint();
 
-    public Image(){
+    public Image() {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
     }
 
     /**
      * 获取要绘制的位图
+     *
      * @return
      */
     public Bitmap getImage() {
@@ -46,10 +47,11 @@ public abstract class Image implements Drawable {
 
     /**
      * 获取图片的绘制区域
+     *
      * @return
      */
-    public Rect getDrawRect(){
-        return new Rect(x,y,x+wid,y+hei);
+    public Rect getDrawRect() {
+        return new Rect(x, y, x + wid, y + hei);
     }
 
     @Override

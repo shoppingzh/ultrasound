@@ -22,7 +22,7 @@ import java.util.List;
  * Created by Administrator on 2017/8/13/013.
  */
 
-public class SnapshotAdapter extends ArrayAdapter<Snapshot>{
+public class SnapshotAdapter extends ArrayAdapter<Snapshot> {
 
     private static final String TAG = "SnapshotAdapter";
 
@@ -44,14 +44,14 @@ public class SnapshotAdapter extends ArrayAdapter<Snapshot>{
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final Snapshot snapshot = getItem(position);
         ViewHolder viewHolder;
-        if(convertView == null){
+        if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(mResource,null);
+            convertView = LayoutInflater.from(mContext).inflate(mResource, null);
             viewHolder.imgIv = (ImageView) convertView.findViewById(R.id.iv_snapshot);
 //            viewHolder.nameTv = (TextView) convertView.findViewById(R.id.tv_snapshot_name);
 //            viewHolder.deleteBtn = (Button) convertView.findViewById(R.id.btn_delete_image);
             convertView.setTag(viewHolder);
-        }else{
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
@@ -63,7 +63,7 @@ public class SnapshotAdapter extends ArrayAdapter<Snapshot>{
         opts.inPreferredConfig = Bitmap.Config.RGB_565;
         opts.inJustDecodeBounds = false;
         viewHolder.imgIv.setImageBitmap(BitmapFactory.decodeFile(snapshot.getPathName(),opts));*/
-        ImageLoader.getInstance().displayImage("file:///"+snapshot.getPathName(),viewHolder.imgIv);
+        ImageLoader.getInstance().displayImage("file:///" + snapshot.getPathName(), viewHolder.imgIv);
         /*viewHolder.nameTv.setText(snapshot.getName());
         viewHolder.deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +83,7 @@ public class SnapshotAdapter extends ArrayAdapter<Snapshot>{
         return convertView;
     }
 
-    class ViewHolder{
+    class ViewHolder {
         ImageView imgIv;
         TextView nameTv;
         Button deleteBtn;

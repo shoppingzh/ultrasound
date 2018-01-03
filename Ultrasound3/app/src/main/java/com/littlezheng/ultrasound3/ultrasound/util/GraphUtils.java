@@ -13,11 +13,12 @@ public abstract class GraphUtils {
 
     /**
      * 获取简单文本画笔，只指定文字大小和颜色
-     * @param textSize 文字大小
+     *
+     * @param textSize  文字大小
      * @param textColor 文字颜色
      * @return
      */
-    public static Paint getSimpleTextPaint(float textSize, int textColor){
+    public static Paint getSimpleTextPaint(float textSize, int textColor) {
         Paint p = new Paint();
         p.setTextSize(textSize);
         p.setColor(textColor);
@@ -26,9 +27,10 @@ public abstract class GraphUtils {
 
     /**
      * 清除画布内容
+     *
      * @param c
      */
-    public static void clearCanvas(Canvas c){
+    public static void clearCanvas(Canvas c) {
         Paint paint = new Paint();
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         c.drawPaint(paint);

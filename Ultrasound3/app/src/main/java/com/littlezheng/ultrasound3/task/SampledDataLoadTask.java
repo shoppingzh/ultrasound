@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.littlezheng.ultrasound3.ultrasound.SampledData;
+import com.littlezheng.ultrasound3.ultrasound.base.SampledData;
 
 
 /**
@@ -13,12 +13,12 @@ import com.littlezheng.ultrasound3.ultrasound.SampledData;
  * 配置文件加载任务，该异步任务在应用启动时即加载
  */
 
-public class SampledDataLoadTask extends AsyncTask<SampledData,Integer,Boolean> {
+public class SampledDataLoadTask extends AsyncTask<SampledData, Integer, Boolean> {
 
     private Context mContext;
     private ProgressDialog progressDialog;
 
-    public SampledDataLoadTask(Context context){
+    public SampledDataLoadTask(Context context) {
         mContext = context;
     }
 
@@ -36,8 +36,8 @@ public class SampledDataLoadTask extends AsyncTask<SampledData,Integer,Boolean> 
         try {
             SampledData data = params[0];
             data.load();
-            if(mContext != null) progressDialog.dismiss();
-        }catch (Exception e){
+            if (mContext != null) progressDialog.dismiss();
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -47,8 +47,8 @@ public class SampledDataLoadTask extends AsyncTask<SampledData,Integer,Boolean> 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-        if(!aBoolean){
-            Toast.makeText(mContext,"采样数据加载失败，请重新启动应用！",Toast.LENGTH_SHORT).show();
+        if (!aBoolean) {
+            Toast.makeText(mContext, "采样数据加载失败，请重新启动应用！", Toast.LENGTH_SHORT).show();
         }
     }
 

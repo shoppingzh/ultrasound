@@ -13,12 +13,12 @@ public abstract class Protocol extends Observable implements Observer {
 
     //返回数据的通讯协议，第三个字节表控制字，第四个字节表参数值
     private byte[] protocol = new byte[]{
-            0x55, (byte)0xAA,
+            0x55, (byte) 0xAA,
             0, 0,
-            (byte)0xAA, 0x55
+            (byte) 0xAA, 0x55
     };
 
-    public Protocol(int controlCode, Observable trigger){
+    public Protocol(int controlCode, Observable trigger) {
         this.trigger = trigger;
         protocol[2] = (byte) controlCode;
         trigger.addObserver(this);
@@ -29,7 +29,7 @@ public abstract class Protocol extends Observable implements Observer {
     }
 
     public void setControlCode(int controlCode) {
-        protocol[2] = (byte)controlCode;
+        protocol[2] = (byte) controlCode;
     }
 
     public byte getData() {
@@ -40,8 +40,16 @@ public abstract class Protocol extends Observable implements Observer {
         protocol[3] = (byte) data;
     }
 
-    public byte[] getProtocol(){
+    public byte[] getProtocol() {
         return protocol.clone();
+    }
+
+    /**
+     * 状态改变时将协议内容推送给观察者
+     */
+    protected final void changed() {
+        setChanged();
+        notifyObservers(getProtocol());
     }
 
 }

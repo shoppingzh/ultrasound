@@ -1,6 +1,7 @@
 package com.littlezheng.ultrasound3.ultrasound.display;
 
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 /**
  * Created by zxp on 2017/8/9.
@@ -8,11 +9,18 @@ import android.graphics.Rect;
 
 public class DrawInfo {
 
-    public int thirdSamWid,thirdSamHei;
+    public int thirdSamWid, thirdSamHei;
     public Rect src;
-    public Rect dst;
+    public RectF dst;
 
     public DrawInfo(int thirdSamWid, int thirdSamHei, Rect src, Rect dst) {
+        this.thirdSamWid = thirdSamWid;
+        this.thirdSamHei = thirdSamHei;
+        this.src = src;
+        this.dst = new RectF(dst);
+    }
+
+    public DrawInfo(int thirdSamWid, int thirdSamHei, Rect src, RectF dst) {
         this.thirdSamWid = thirdSamWid;
         this.thirdSamHei = thirdSamHei;
         this.src = src;

@@ -14,7 +14,7 @@ import java.util.Properties;
  * Created by Administrator on 2017/8/31/031.
  */
 
-public class UdpTransmitter implements Observer{
+public class UdpTransmitter implements Observer {
 
     private final UdpSender udpSender;
     private final BufferedUdpReceiver udpReceiver;
@@ -25,13 +25,13 @@ public class UdpTransmitter implements Observer{
      * @param config 需对Config中所有属性进行合理初始化
      */
     public UdpTransmitter(Config config) throws SocketException {
-        if(!(config.receivePort >=1 && config.receivePort <= 65536))
+        if (!(config.receivePort >= 1 && config.receivePort <= 65536))
             throw new IllegalArgumentException("接收端口错误！");
-        if(config.receivePackSize <=0)
+        if (config.receivePackSize <= 0)
             throw new IllegalArgumentException("数据包大小必须大于0！");
-        if(config.receiveBufSize <= 0)
+        if (config.receiveBufSize <= 0)
             throw new IllegalArgumentException("缓冲区大小错误！");
-        if(!(config.sendPort >=1 && config.sendPort <= 65536))
+        if (!(config.sendPort >= 1 && config.sendPort <= 65536))
             throw new IllegalArgumentException("发送端口错误！");
         udpSender = new SimpleUdpSender(config.sendAddress, config.sendPort);
         udpReceiver = new BufferedUdpReceiver(config.receivePort, config.receivePackSize, config.receiveBufSize);
@@ -43,7 +43,7 @@ public class UdpTransmitter implements Observer{
      * @param data
      * @return
      */
-    public boolean send(byte[] data){
+    public boolean send(byte[] data) {
         return udpSender.send(data);
     }
 
@@ -52,14 +52,14 @@ public class UdpTransmitter implements Observer{
      *
      * @return
      */
-    public byte[] receive(){
+    public byte[] receive() {
         return udpReceiver.receive();
     }
 
     /**
      * 启用接收
      */
-    public void enableReceive(){
+    public void enableReceive() {
         udpReceiver.enable();
     }
 
@@ -68,7 +68,7 @@ public class UdpTransmitter implements Observer{
      *
      * @param clearBuffer
      */
-    public void disableReceive(boolean clearBuffer){
+    public void disableReceive(boolean clearBuffer) {
         udpReceiver.disable(clearBuffer);
     }
 
@@ -77,7 +77,7 @@ public class UdpTransmitter implements Observer{
      *
      * @param protocol
      */
-    public void addProtocol(Protocol protocol){
+    public void addProtocol(Protocol protocol) {
         protocol.addObserver(this);
     }
 
@@ -86,14 +86,14 @@ public class UdpTransmitter implements Observer{
      *
      * @param protocol
      */
-    public void deleteProtocol(Protocol protocol){
+    public void deleteProtocol(Protocol protocol) {
         protocol.deleteObserver(this);
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        if(! (o instanceof Protocol)) return;
-        send(((Protocol)o).getProtocol());
+        if (!(o instanceof Protocol)) return;
+        send(((Protocol) o).getProtocol());
     }
 
     public UdpSender getUdpSender() {
@@ -107,7 +107,7 @@ public class UdpTransmitter implements Observer{
     /**
      * 初始化传输器需要的配置信息
      */
-    public static class Config{
+    public static class Config {
         public int receivePort;
         public int receivePackSize;
         public int receiveBufSize;
@@ -115,7 +115,7 @@ public class UdpTransmitter implements Observer{
         public InetAddress sendAddress;
         public int sendPort;
 
-        public void loadFromStream(InputStream in){
+        public void loadFromStream(InputStream in) {
             Properties prop = new Properties();
             try {
                 prop.load(in);
@@ -128,8 +128,8 @@ public class UdpTransmitter implements Observer{
                 sendPort = Integer.valueOf(prop.getProperty("sendPort"));
             } catch (IOException e) {
                 throw new RuntimeException("配置信息加载失败！");
-            }finally {
-                if(in != null){
+            } finally {
+                if (in != null) {
                     try {
                         in.close();
                     } catch (IOException e) {

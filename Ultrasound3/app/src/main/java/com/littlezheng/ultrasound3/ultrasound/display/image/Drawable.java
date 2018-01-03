@@ -10,6 +10,7 @@ public interface Drawable {
 
     /**
      * 设定绘制位置
+     *
      * @param x 绘制x坐标
      * @param y 绘制y坐标
      */
@@ -17,12 +18,14 @@ public interface Drawable {
 
     /**
      * 获取绘制的x坐标
+     *
      * @return
      */
     int getX();
 
     /**
      * 获取绘制的y坐标
+     *
      * @return
      */
     int getY();

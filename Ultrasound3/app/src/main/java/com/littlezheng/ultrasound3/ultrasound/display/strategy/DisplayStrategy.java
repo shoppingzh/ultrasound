@@ -8,7 +8,7 @@ import com.chillingvan.canvasgl.ICanvasGL;
  * Created by Administrator on 2017/8/29/029.
  */
 
-public interface DisplayStrategy{
+public interface DisplayStrategy {
 
     /**
      * 显示初始化，提供了视图的宽高属性，可实现显示策略的延时初始化，因为
@@ -37,9 +37,8 @@ public interface DisplayStrategy{
     boolean onTouchEvent(MotionEvent event);
 
     /**
-     * 显示策略的清理工作，如果视图不再使用到该显示策略，再切换到其它显示策略时，将对
+     * 显示策略的清理工作，如果视图不再使用到该显示策略，在切换到其它显示策略时，将对
      * 原来的显示策略进行清理工作
-     *
      */
     void cleanup();
 }

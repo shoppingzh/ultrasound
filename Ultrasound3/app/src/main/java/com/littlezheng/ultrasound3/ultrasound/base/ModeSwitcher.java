@@ -6,16 +6,16 @@ import java.util.Observable;
  * Created by Administrator on 2017/9/5/005.
  */
 
-public class ModeSwitcher extends Observable{
+public class ModeSwitcher extends Observable {
 
     private Mode mode;
 
-    public ModeSwitcher(Mode mode){
+    public ModeSwitcher(Mode mode) {
         this.mode = mode;
     }
 
     public void setMode(Mode mode) {
-        if(mode == this.mode) return;
+        //if(mode == this.mode) return;
         this.mode = mode;
         modeChanged();
     }

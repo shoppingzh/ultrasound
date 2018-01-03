@@ -22,7 +22,7 @@ public class MFrame extends Frame {
     @Override
     public void put(byte[] entity, int srcPos, int dstPos, int len) {
         returnToZeroIfFull();
-        System.arraycopy(entity,srcPos,data[pos++],dstPos,len);
+        System.arraycopy(entity, srcPos, data[pos++], dstPos, len);
 //        Log.d(TAG,"线数据："+ Arrays.toString(data[pos-1]));
     }
 
@@ -34,11 +34,11 @@ public class MFrame extends Frame {
     @Override
     public void put(byte[] entity) {
         returnToZeroIfFull();
-        System.arraycopy(entity,0,data[pos++],0,entity.length);
+        System.arraycopy(entity, 0, data[pos++], 0, entity.length);
     }
 
     private void returnToZeroIfFull() {
-        if(pos >= width){
+        if (pos >= width) {
             pos = 0;
         }
     }

@@ -1,7 +1,10 @@
 package com.littlezheng.ultrasound3.ultrasound.transmission;
 
+import android.util.Log;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -14,15 +17,12 @@ public class BufferedUdpReceiver implements UdpReceiver {
 
     private static final String TAG = "BufferedUdpReceiver";
 
-    private final int port;
-    //包的大小
-    private final int packetSize;
-    //缓冲队列大小
-    private final int bufferSize;
-
     private final DatagramSocket socket;
-    //缓冲队列
-    private final BlockingQueue<byte[]> buffer;
+    private final int packetSize;   //报文大小
+    private final int port;
+
+    private final BlockingQueue<byte[]> buffer;     //接收缓冲队列
+    private final int bufferSize;   //缓冲队列容量
 
     private boolean enabled;
     private boolean clearBuffer;
@@ -31,7 +31,12 @@ public class BufferedUdpReceiver implements UdpReceiver {
         this.port = port;
         this.packetSize = packetSize;
         this.bufferSize = bufferSize;
-        socket = new DatagramSocket(port);
+        //设置端口可复用，可解决端口冲突问题导致应用闪退问题
+        socket = new DatagramSocket(null);
+        socket.setReuseAddress(true);
+        socket.bind(new InetSocketAddress(port));
+        socket.setReceiveBufferSize(212992);
+        Log.d(TAG, "udp底层缓冲区大小：" + socket.getReceiveBufferSize());
         buffer = new LinkedBlockingQueue(bufferSize);
     }
 
@@ -64,17 +69,18 @@ public class BufferedUdpReceiver implements UdpReceiver {
     /**
      * 开启接收
      */
-    public void enable(){
-        if(enabled) return;
+    public void enable() {
+        if (enabled) return;
         enabled = true;
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 byte[] buf = new byte[packetSize];
                 byte[] empty = new byte[packetSize];
                 DatagramPacket p = new DatagramPacket(buf, packetSize);
-                try{
-                    while(enabled){
+                try {
+                    while (enabled) {
                         socket.receive(p);
                         byte[] oData = p.getData();
                         byte[] cData = new byte[packetSize];
@@ -83,9 +89,10 @@ public class BufferedUdpReceiver implements UdpReceiver {
 //                        Log.d(TAG,"接收到数据："+ Arrays.toString(cData));
                         System.arraycopy(empty, 0, buf, 0, packetSize);
                     }
+
                     //代码运行到此处，说明接收已经关闭
-                    if(clearBuffer) buffer.clear();
-                }catch (Exception e){
+                    if (clearBuffer) buffer.clear();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -97,7 +104,7 @@ public class BufferedUdpReceiver implements UdpReceiver {
      *
      * @param clearBuffer 是否同时清除缓冲区
      */
-    public void disable(boolean clearBuffer){
+    public void disable(boolean clearBuffer) {
         enabled = false;
         this.clearBuffer = clearBuffer;
     }

@@ -22,7 +22,7 @@ public class UdpPacket405Validator extends UdpPacketValidator {
 
     private final int tailTwo;
 
-    public UdpPacket405Validator(){
+    public UdpPacket405Validator() {
         this.packetSize = 405;
         this.headOne = 0;
         this.headTwo = 1;
@@ -34,13 +34,13 @@ public class UdpPacket405Validator extends UdpPacketValidator {
     @Override
     public boolean validate(byte[] pd) {
         //校验头尾
-        if(pd[headOne] != 0x55 || (pd[headTwo]&0xff) != 0xaa
-                || (pd[tailOne]&0xff) != 0xaa || pd[tailTwo] != 0x55){
+        if (pd[headOne] != 0x55 || (pd[headTwo] & 0xff) != 0xaa
+                || (pd[tailOne] & 0xff) != 0xaa || pd[tailTwo] != 0x55) {
             return false;
         }
 
         int id = pd[idIdx] & 0xff;
-        if(id < 1 || id > 159){
+        if (id < 1 || id > 159) {
             return false;
         }
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ultrasound>
+
+    <transfer>
+        <receiver buffer-size="127" packet-size="406" port="5001" />
+        <sender address="192.168.1.1" port="5001" />
+    </transfer>
+
+    <process>
+        <sample-data assets-file="thirdsample.data" />
+    </process>
+
+    <display>
+        <video dir="aaa/video" frames="200" />
+        <image dir="aaa/image" />
+    </display>
+
+</ultrasound>

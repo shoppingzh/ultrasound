@@ -21,7 +21,7 @@ public class RectMaker extends ShapeMaker {
     @Override
     public void click(float x, float y) {
         super.click(x, y);
-        switch (step){
+        switch (step) {
             case 1:
                 leftTop.set(x, y);
                 break;
@@ -41,11 +41,12 @@ public class RectMaker extends ShapeMaker {
 
     /**
      * 获取更近的点
+     *
      * @param x
      * @param y
      * @return
      */
-    private PointF getCloser(float x, float y){
+    private PointF getCloser(float x, float y) {
         PointF p = new PointF(x, y);
         double firstLen = MeasureUtils.length(p, leftTop);
         double secondLen = MeasureUtils.length(p, rightBottom);
@@ -54,7 +55,7 @@ public class RectMaker extends ShapeMaker {
 
     @Override
     public void make(Canvas canvas) {
-        switch (step){
+        switch (step) {
             case 1:
                 canvas.drawCircle(leftTop.x, leftTop.y, 10, pointPaint);
                 break;
@@ -65,8 +66,8 @@ public class RectMaker extends ShapeMaker {
             case 3:
                 canvas.drawCircle(leftTop.x, leftTop.y, 10, pointPaint);
                 canvas.drawCircle(rightBottom.x, rightBottom.y, 10, pointPaint);
-                canvas.drawRect(leftTop.x,leftTop.y,rightBottom.x,rightBottom.y,linePaint);
-                canvas.drawText("周长："+MeasureUtils.rectPerimeter(leftTop,rightBottom)+", 面积："+MeasureUtils.rectArea(leftTop,rightBottom),
+                canvas.drawRect(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y, linePaint);
+                canvas.drawText("周长：" + MeasureUtils.rectPerimeter(leftTop, rightBottom) + ", 面积：" + MeasureUtils.rectArea(leftTop, rightBottom),
                         rightBottom.x, rightBottom.y, textPaint);
                 break;
         }

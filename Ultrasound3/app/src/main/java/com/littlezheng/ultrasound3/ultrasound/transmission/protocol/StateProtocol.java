@@ -15,20 +15,12 @@ public class StateProtocol extends Protocol {
     @Override
     public void update(Observable o, Object arg) {
         boolean frozen = (boolean) arg;
-        if(frozen){
+        if (frozen) {
             setData(0x00);
-        }else{
+        } else {
             setData(0xFF);
         }
-        stateChanged();
-    }
-
-    /**
-     * 状态改变
-     */
-    private void stateChanged() {
-        setChanged();
-        notifyObservers(getProtocol());
+        changed();
     }
 
 }

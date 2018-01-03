@@ -1,10 +1,13 @@
 package com.littlezheng.ultrasound3.ultrasound.process;
 
 import android.os.Environment;
+import android.util.Log;
 
-import com.littlezheng.ultrasound3.ultrasound.SampledData;
 import com.littlezheng.ultrasound3.ultrasound.UContext;
+import com.littlezheng.ultrasound3.ultrasound.base.Cal;
 import com.littlezheng.ultrasound3.ultrasound.base.Colors;
+import com.littlezheng.ultrasound3.ultrasound.base.ModeSwitcher;
+import com.littlezheng.ultrasound3.ultrasound.base.SampledData;
 import com.littlezheng.ultrasound3.ultrasound.transmission.UdpTransmitter;
 import com.littlezheng.ultrasound3.ultrasound.transmission.validate.UdpPacket406Validator;
 import com.littlezheng.ultrasound3.ultrasound.transmission.validate.UdpPacketValidator;
@@ -15,12 +18,14 @@ import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by Administrator on 2017/9/5/005.
  */
 
 public class MainProcessor
-        extends Observable implements Observer{
+        extends Observable implements Observer {
 
     private final UContext uContext;
     private final UdpTransmitter udpTransmitter;
@@ -50,7 +55,10 @@ public class MainProcessor
     private boolean bEnabled;
     private boolean mEnabled;
 
-    public MainProcessor(UContext uContext){
+    //是否计算背膘
+    private byte[] lastBackFatData;
+
+    public MainProcessor(UContext uContext) {
         this.uContext = uContext;
         udpTransmitter = uContext.getUdpTransmitter();
         validator = new UdpPacket406Validator();
@@ -64,13 +72,15 @@ public class MainProcessor
         //深度感知、伪彩感知
         uContext.getParam(UContext.PARAM_DEPTH).addObserver(this);
         uContext.getColors().addObserver(this);
+        //模式感知
+        uContext.getModeSwitcher().addObserver(this);
     }
 
     /**
      * 开启处理
      */
-    public void enable(){
-        if(enabled) return;
+    public void enable() {
+        if (enabled) return;
         enabled = true;
 
         new Thread(new Runnable() {
@@ -78,17 +88,21 @@ public class MainProcessor
             public void run() {
                 loadBImageConfig();
                 imageHolder = uContext.getImageHolder();
-                try{
-                    while(enabled){
+                try {
+                    while (enabled) {
                         byte[] data = udpTransmitter.receive();
-                        if(!validator.validate(data)) continue;
+                        if (!validator.validate(data)) continue;
 
                         int id = data[403] & 0xff;
 
+                        if (id == 64) {
+                            lastBackFatData = data;
+                        }
+
                         //B图像生成
-                        if(bEnabled){
-                            int offset = zeros[id-1];
-                            if(bFrame.full()){
+                        if (bEnabled) {
+                            int offset = zeros[id - 1];
+                            if (bFrame.full()) {
                                 System.arraycopy(clearBPixels, 0, bImagePixels, 0, bImagePixels.length);
                                 byte[][] frameData = bFrame.getData();
                                 thirdSample(bImagePixels, frameData, secSamWid,
@@ -98,15 +112,18 @@ public class MainProcessor
                                 byte[][] data2 = bFrame.getCloneData();
                                 imageHolder.add(new StorableFrame(data2, depth, colors));
 
+//                                int[] pixels = new int[bImagePixels.length];
+//                                System.arraycopy(bImagePixels, 0, pixels, 0, bImagePixels.length);
                                 setChanged();
                                 notifyObservers();
-                            }else{
-                                bFrame.put(id-1, data, 2, offset, SampledData.ORIGINAL_FRAME_HEIGHT);
+//                                notifyObservers(pixels);
+                            } else {
+                                bFrame.put(id - 1, data, 2, offset, SampledData.ORIGINAL_FRAME_HEIGHT);
                             }
                         }
 
                         //M图像生成
-                        if(mEnabled){
+                        if (mEnabled) {
                             mFrame.put(data, 2, 0, SampledData.ORIGINAL_FRAME_HEIGHT);
                             generateMImage(mImagePixels, mFrame, colors);
 
@@ -115,7 +132,7 @@ public class MainProcessor
                         }
 
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     //TODO
                 }
@@ -126,22 +143,24 @@ public class MainProcessor
     /**
      * 关闭处理
      */
-    public void disable(){
+    public void disable() {
         enabled = false;
     }
 
     /**
      * 开启/关闭B或M图像处理
+     *
      * @param b
      * @param m
      */
-    public void enableProcess(boolean b, boolean m){
+    public void enableProcess(boolean b, boolean m) {
         bEnabled = b;
         mEnabled = m;
     }
 
     /**
      * 是否正在处理中
+     *
      * @return
      */
     public boolean inProcess() {
@@ -150,9 +169,10 @@ public class MainProcessor
 
     /**
      * 设置伪彩
+     *
      * @param color
      */
-    public void setPseudoColor(Colors.PseudoColor color){
+    public void setPseudoColor(Colors.PseudoColor color) {
         uContext.getColors().change(color);
     }
 
@@ -160,16 +180,42 @@ public class MainProcessor
      * 保存当前视频
      */
     public boolean saveVideo() {
-        if(enabled) return false;
+        if (enabled) return false;
         File file = new File(Environment.getExternalStorageDirectory(),
-                UContext.VIDEO_STORAGE_PATH + "/" + DateUtils.getDateTimeStr()+".ump4");
+                UContext.VIDEO_STORAGE_PATH + "/" + DateUtils.getDateTimeStr() + ".ump4");
         ObjectUtils.saveObject(imageHolder, file);
         return true;
     }
 
+    /**
+     * 计算背膘
+     */
+    public void calculateBackFat() {
+        if (lastBackFatData != null) {
+            float fat = Cal.calculateBackFat(lastBackFatData);
+            setChanged();
+            notifyObservers(fat);
+        }
+    }
+
     @Override
     public void update(Observable o, Object arg) {
-        if(arg != null){
+        ModeSwitcher modeSwitcher = uContext.getModeSwitcher();
+        if (o == modeSwitcher) {
+            Log.d(TAG, "当前模式：" + modeSwitcher.getMode());
+            switch (modeSwitcher.getMode()) {
+                case MODE_B:
+                    enableProcess(true, false);
+                    break;
+                case MODE_M:
+                    enableProcess(false, true);
+                    break;
+                case MODE_BB:
+                    enableProcess(true, false);
+                    break;
+            }
+        }
+        if (arg != null) {
             colors = uContext.getColors().get();
             return;
         }
@@ -181,46 +227,46 @@ public class MainProcessor
      * 三次采样处理
      *
      * @param bImagePixels 存放处理结果的像素数组
-     * @param origin 源数据
-     * @param width 源数据帧宽度
-     * @param height 源数据帧高度
-     * @param positions 插值采样位置信息
-     * @param intervals 插值间隔信息
-     * @param colors 处理像素的颜色
+     * @param origin       源数据
+     * @param width        源数据帧宽度
+     * @param height       源数据帧高度
+     * @param positions    插值采样位置信息
+     * @param intervals    插值间隔信息
+     * @param colors       处理像素的颜色
      */
     public static void thirdSample(int[] bImagePixels,
-                             byte[][] origin,
-                             int width,
-                             int height,
-                             int[][] positions,
-                             int[][] intervals,
-                             int[] colors) {
+                                   byte[][] origin,
+                                   int width,
+                                   int height,
+                                   int[][] positions,
+                                   int[][] intervals,
+                                   int[] colors) {
 //        long start = System.currentTimeMillis();
-        for(int i=0;i<height;i++){
-            for(int j=0;j<width-1;j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width - 1; j++) {
                 int curr = origin[j][i] & 0xff;
-                int next = origin[j+1][i] & 0xff;
+                int next = origin[j + 1][i] & 0xff;
 
                 int interval = intervals[i][j];
                 int pos = positions[i][j];
 
                 int cIdx = i * SampledData.THIRD_SAMPLE_MAX_WIDTH + pos;
 //                //如果取样间隔小于等于1，则直接放置数据即可
-                if(interval <= 1){
+                if (interval <= 1) {
                     bImagePixels[cIdx] = colors[curr];
                     continue;
                 }
 
                 bImagePixels[cIdx++] = colors[curr];
 //                //如果相邻两点值相同，则插值也相同，故不做运算
-                if(curr == next){
-                    for(int k=interval-1;k>0;k--){
+                if (curr == next) {
+                    for (int k = interval - 1; k > 0; k--) {
                         bImagePixels[cIdx++] = colors[curr];
                     }
-                }else{
-                    for(int k=interval-1;k>0;k--){
-                        float fInterval = (float)interval;
-                        float pow1 = k / fInterval,pow2 = (interval-k) / fInterval;
+                } else {
+                    for (int k = interval - 1; k > 0; k--) {
+                        float fInterval = (float) interval;
+                        float pow1 = k / fInterval, pow2 = (interval - k) / fInterval;
                         int value = (int) (curr * pow1 + next * pow2);
                         bImagePixels[cIdx++] = colors[value];
                     }
@@ -236,22 +282,22 @@ public class MainProcessor
      * M图像生成算法
      *
      * @param mImagePixels 存放处理后的M图像像素数组
-     * @param mFrame M图像源数据帧
-     * @param colors 处理像素的颜色
+     * @param mFrame       M图像源数据帧
+     * @param colors       处理像素的颜色
      */
     public static void generateMImage(int[] mImagePixels,
                                       MFrame mFrame,
                                       int[] colors) {
 //        long s = System.currentTimeMillis();
         byte[][] data = mFrame.getData();
-        int wid = mFrame.getWidth(),hei = mFrame.getHeight();
+        int wid = mFrame.getWidth(), hei = mFrame.getHeight();
         int start = mFrame.getPos();
         int idx = 0;
-        for(int i=0;i<hei;i++){
-            for(int j=start;j<wid;j++){
+        for (int i = 0; i < hei; i++) {
+            for (int j = start; j < wid; j++) {
                 mImagePixels[idx++] = colors[data[j][i] & 0xff];
             }
-            for(int j=0;j<start;j++){
+            for (int j = 0; j < start; j++) {
                 mImagePixels[idx++] = colors[data[j][i] & 0xff];
             }
         }

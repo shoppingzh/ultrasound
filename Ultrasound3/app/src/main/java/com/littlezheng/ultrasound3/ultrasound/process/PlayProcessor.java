@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.littlezheng.ultrasound3.ultrasound.SampledData;
 import com.littlezheng.ultrasound3.ultrasound.UContext;
+import com.littlezheng.ultrasound3.ultrasound.base.SampledData;
 import com.littlezheng.ultrasound3.util.ObjectUtils;
 
 import java.io.File;
@@ -29,8 +29,9 @@ public class PlayProcessor extends Observable {
     private int[][] intervals; //三次采样间隔参数
 
     private boolean enabled;
+    private Thread currentWorker;
 
-    public PlayProcessor(UContext uContext){
+    public PlayProcessor(UContext uContext) {
         this.uContext = uContext;
 
         bImagePixels = uContext.getBImagePixels();
@@ -40,8 +41,8 @@ public class PlayProcessor extends Observable {
     /**
      * 回放
      */
-    public void replay(){
-        if(enabled) return;
+    public void replay() {
+        if (enabled) return;
         enabled = true;
 
         playVideo(null);
@@ -49,10 +50,11 @@ public class PlayProcessor extends Observable {
 
     /**
      * 播放指定视频
+     *
      * @param video
      */
     public void play(File video) {
-        if(enabled) return;
+        if (enabled) return;
         enabled = true;
 
         playVideo(video);
@@ -62,72 +64,24 @@ public class PlayProcessor extends Observable {
     /**
      * 播放
      */
-    private void playVideo(final File video){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //加载视频源
-                ImageHolder imageHolder = null;
-                if(video == null){
-                    imageHolder = uContext.getImageHolder();
-                }else{
-                    final Activity activity = (Activity) uContext.getAndroidContext();
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast toast = Toast.makeText(activity, "正在加载...", Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                        }
-                    });
-                    imageHolder = ObjectUtils.readObject(video, ImageHolder.class);
-                }
-
-                int count = 0;
-                for(StorableFrame frame : imageHolder){
-                    if(frame != null){
-                        depth = frame.depth;
-                        colors = frame.colors;
-                        loadBImageConfig();
-
-                        System.arraycopy(clearBPixels, 0, bImagePixels, 0, bImagePixels.length);
-                        MainProcessor.thirdSample(bImagePixels, frame.data, secSamWid, secSamHei,
-                                positions, intervals, colors);
-                        try {
-                            Thread.sleep(70);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        setChanged();
-                        notifyObservers(depth);
-                    }
-                }
-                enabled = false;
-                ((Activity)uContext.getAndroidContext()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast t = Toast.makeText(uContext.getAndroidContext(), "播放完毕！", Toast.LENGTH_SHORT);
-                        t.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                        t.show();
-                    }
-                });
-            }
-        }).start();
+    private void playVideo(final File video) {
+        currentWorker = new Thread(new Worker(video));
+        currentWorker.start();
     }
 
     /**
      * 停止播放
      */
-    public void stop(){
+    public void stop() {
         enabled = false;
     }
 
     /**
      * 是否正在回放
+     *
      * @return
      */
-    public boolean inReplay(){
+    public boolean inReplay() {
         return enabled;
     }
 
@@ -136,6 +90,58 @@ public class PlayProcessor extends Observable {
         secSamHei = SampledData.getSecondSampleHeight(depth);
         positions = uContext.getSampledData().getPositions(depth);
         intervals = uContext.getSampledData().getIntervals(depth);
+    }
+
+    private class Worker implements Runnable {
+
+        File video;
+
+        public Worker(File video) {
+            this.video = video;
+        }
+
+        @Override
+        public void run() {
+            //加载视频源
+            ImageHolder imageHolder = null;
+            if (video == null) {
+                imageHolder = uContext.getImageHolder();
+            } else {
+                final Activity activity = (Activity) uContext.getAndroidContext();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast toast = Toast.makeText(activity, "正在加载...", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
+                    }
+                });
+                imageHolder = ObjectUtils.readObject(video, ImageHolder.class);
+            }
+
+            int count = 0;
+            for (StorableFrame frame : imageHolder) {
+                if (!enabled) break;
+                if (frame != null) {
+                    depth = frame.depth;
+                    colors = frame.colors;
+                    loadBImageConfig();
+
+                    System.arraycopy(clearBPixels, 0, bImagePixels, 0, bImagePixels.length);
+                    MainProcessor.thirdSample(bImagePixels, frame.data, secSamWid, secSamHei,
+                            positions, intervals, colors);
+                    try {
+                        Thread.sleep(70);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    setChanged();
+                    notifyObservers(depth);
+                }
+            }
+            enabled = false;
+        }
     }
 
 }

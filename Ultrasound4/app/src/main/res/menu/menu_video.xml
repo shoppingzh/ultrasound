@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/item_replay"
+        android:title="回放" />
+
+    <item android:id="@+id/item_save_video"
+        android:title="保存视频" />
+
+    <item android:id="@+id/item_view_videos"
+        android:title="查看视频" />
+
+</menu>

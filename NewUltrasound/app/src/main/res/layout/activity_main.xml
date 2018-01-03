@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000">
+
+    <!-- 左侧（上半显示区域和下半操作区域） -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/display_window_wrapper"
+            android:padding="10dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#000">
+
+
+        </LinearLayout>
+
+
+        <!--基本功能-->
+        <LinearLayout
+            android:id="@+id/layout_function_normal"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#aaa">
+
+            <Button
+                android:id="@+id/btn_freeze"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="冻结/运行"/>
+
+            <Button
+                android:id="@+id/btn_measure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="测量"/>
+
+            <Button
+                android:id="@+id/btn_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="图像"/>
+
+            <Button
+                android:id="@+id/btn_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="视频"/>
+
+
+            <!--<Button
+                android:id="@+id/btn_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="模式"/>-->
+
+            <Button
+                android:id="@+id/btn_b_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="B模式"/>
+
+            <Button
+                android:id="@+id/btn_bb_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="B/B模式"/>
+
+
+            <Button
+                android:id="@+id/btn_m_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="M模式"/>
+
+
+            <Button
+                android:id="@+id/btn_bm_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="B/M模式"/>
+
+
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_freeze"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/btn_freeze"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:text="冻结/运行"/>-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_measure"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/btn_measure"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:text="测量"/>-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_image"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/btn_image"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:text="图像"/>-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_video"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/btn_video"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:text="视频"/>-->
+
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_mode"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/btn_mode"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:text="模式"/>-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_pseudo_color"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/btn_pseudo_color"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:text="伪彩"/>-->
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+    <!-- 右侧（参数控制） -->
+    <LinearLayout
+        android:id="@+id/layout_function_params"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="#aaa">
+
+        <Button
+            android:id="@+id/btn_inc_contrast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="对比度↑"/>
+
+        <Button
+            android:id="@+id/btn_dec_contrast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="对比度↓"/>
+
+        <Button
+            android:id="@+id/btn_inc_lightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="亮度↑"/>
+
+        <Button
+            android:id="@+id/btn_dec_lightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="亮度↓"/>
+
+        <Button
+            android:id="@+id/btn_inc_gain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="总增↑"/>
+
+        <Button
+            android:id="@+id/btn_dec_gain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="总增↓"/>
+
+        <Button
+            android:id="@+id/btn_inc_near_gain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="近增↑"/>
+
+        <Button
+            android:id="@+id/btn_dec_near_gain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="近增↓"/>
+
+        <Button
+            android:id="@+id/btn_inc_far_gain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="远增↑"/>
+
+        <Button
+            android:id="@+id/btn_dec_far_gain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="远增↓"/>
+
+        <Button
+            android:id="@+id/btn_inc_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="速度(M)↑"/>
+
+        <Button
+            android:id="@+id/btn_dec_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="速度(M)↓"/>
+
+        <Button
+            android:id="@+id/btn_inc_depth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="深度↑"/>
+
+        <Button
+            android:id="@+id/btn_dec_depth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="深度↓"/>
+
+        <Button
+            android:id="@+id/btn_pseudo_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="伪彩"/>
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_inc_contrast"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="对比度↑"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_dec_contrast"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="对比度↓"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_inc_lightness"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="亮度↑"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_dec_lightness"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="亮度↓"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_inc_gain"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="总增↑"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_dec_gain"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="总增↓"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_inc_near_gain"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="近增↑"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_dec_near_gain"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="近增↓"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_inc_far_gain"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="远增↑"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_dec_far_gain"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="远增↓"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_inc_depth"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="深度↑"/>-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btn_dec_depth"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="深度↓"/>-->
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

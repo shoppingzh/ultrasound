@@ -38,13 +38,13 @@ public class FolderAdapter extends ArrayAdapter<String> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final String folderName = getItem(position);
         ViewHolder viewHolder;
-        if(convertView == null){
+        if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(mResource,null);
+            convertView = LayoutInflater.from(mContext).inflate(mResource, null);
             viewHolder.imgIv = (ImageView) convertView.findViewById(R.id.iv_folder_img);
             viewHolder.nameTv = (TextView) convertView.findViewById(R.id.tv_folder_name);
             convertView.setTag(viewHolder);
-        }else{
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.nameTv.setText(folderName);
@@ -52,7 +52,7 @@ public class FolderAdapter extends ArrayAdapter<String> {
         return convertView;
     }
 
-    class ViewHolder{
+    class ViewHolder {
         ImageView imgIv;
         TextView nameTv;
     }

@@ -26,7 +26,7 @@ public class UdpPacket406Validator extends UdpPacketValidator {
 
     private final int tailTwo;
 
-    public UdpPacket406Validator(){
+    public UdpPacket406Validator() {
         this.packetSize = 406;
         this.headOne = 0;
         this.headTwo = 1;
@@ -39,22 +39,20 @@ public class UdpPacket406Validator extends UdpPacketValidator {
     @Override
     public boolean validate(byte[] pd) {
         //校验头尾
-        if(pd[headOne] != 0x55 || (pd[headTwo]&0xff) != 0xaa
-                || (pd[tailOne]&0xff) != 0xaa || pd[tailTwo] != 0x55){
+        if (pd[headOne] != 0x55 || (pd[headTwo] & 0xff) != 0xaa
+                || (pd[tailOne] & 0xff) != 0xaa || pd[tailTwo] != 0x55) {
             return false;
         }
 
         int lastId = pd[lastIdIdx] & 0xff;
         int id = pd[idIdx] & 0xff;
-        if(lastId+1 != id || id < 1 || id > 127){
-            Log.d(TAG,"校/验错误，上一条线id："+lastId+"，当前线id："+id);
+        if (lastId + 1 != id || id < 1 || id > 127) {
+            Log.d(TAG, "校/验错误，上一条线id：" + lastId + "，当前线id：" + id);
             return false;
         }
 
         return true;
     }
-
-
 
 
 }

@@ -15,7 +15,8 @@ import java.util.Observer;
  * Created by Administrator on 2017/9/3/003.
  */
 
-public class StateDisplayStrategyDecorator extends BaseDisplayStrategyDecorator implements Observer{
+public class StateDisplayStrategyDecorator extends BaseDisplayStrategyDecorator
+        implements Observer {
 
     private UContext uContext;
     private StateSwitcher stateSwitcher;
@@ -33,7 +34,7 @@ public class StateDisplayStrategyDecorator extends BaseDisplayStrategyDecorator 
     @Override
     public void init(int width, int height) {
         super.init(width, height);
-        stateText.setDrawPos(20, height-stateText.getHeight()-15);
+        stateText.setDrawPos(20, height - stateText.getHeight() - 15);
         draw();
     }
 
@@ -50,7 +51,7 @@ public class StateDisplayStrategyDecorator extends BaseDisplayStrategyDecorator 
         draw();
     }
 
-    private void draw(){
+    private void draw() {
         stateText.drawText(stateSwitcher.isFrozen() ? "冻结" : "运行");
     }
 
